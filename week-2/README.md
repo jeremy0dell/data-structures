@@ -90,4 +90,8 @@ And logging this output looks like this:
 ```
 Great! Now my data looks like it can be considered in pairs of two. Street address, and state/zipcode.  
 
+At this point it would just take a loop to combine the pairs into a different array. After writing this loop I notice an outlier in the data: One address was a single line, not broken up by a `<br>` tag. Because of this I modified my loop slightly to check for these edge cases. I am sure that for other Manhattan regions, the datasets would have different types of outliers.
+  
+At this point I just need to write the output to a text file.
  
+### I hope this explaination of my thought process was helpful!
