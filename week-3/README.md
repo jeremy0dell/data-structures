@@ -12,6 +12,8 @@ After this I surrounded every line with quotes and added a comma to the end of e
 ## Adding the .env file
 All one really needs to do for this step is to create a file called `.env`, and add it to the same directory as your js file. I noticed that the starter code had this line: `const API_KEY = process.env.TAMU_KEY;`, so my .env file only needed to have `TAMU_KEY=MyFakeAPIKeyHere1234567890` in it.
 
+One can't forget to add a `.gitignore` file containing `.env` to prevent that sensitive API from being publicly accessible!
+
 ## Modifying the example script
 
 The example script needed minimal changes this time around. In fact, all I really needed to do was to add my own list of addresses to the file, for `addresses` and then create an array where I aggregate the outputted Geocodes. I shape the data like this:
