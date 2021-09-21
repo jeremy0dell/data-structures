@@ -59,37 +59,25 @@ async.eachSeries(addresses, function(value, callback) {
 
     (async () => {
     	try {
-        console.log('API', apiRequest)
     		const response = await got(apiRequest);
         var resBody = JSON.parse(response.body)
-        console.log('RES RES', resBody)
 
-    		// let tamuGeo = JSON.parse(response.body);
-        // [ 
-        //   { address: '63 Fifth Ave, New York, NY', latLong: { lat: 40.7353041, lng: -73.99413539999999 } },
-        //   { address: '16 E 16th St, New York, NY', latLong: { lat: 40.736765, lng: -73.9919024 } },
-        //   { address: '2 W 13th St, New York, NY', latLong: { lat: 40.7353297, lng: -73.99447889999999 } } 
-        // ]
         let obj = {
           address: value + ', New York, NY',
           latLong: {
             lat: resBody.OutputGeocodes[0].OutputGeocode.Latitude,
             long: resBody.OutputGeocodes[0].OutputGeocode.Longitude
           }
-          // response.body.OutputGeocodes[0].OutputGeocode
         }
-    		// console.log(tamuGeo['FeatureMatchingResultType'], apiRequest);
     		meetingsData.push(obj);
     	} catch (error) {
-    		console.log('ERROOORRRR', error.response.body);
+    		console.log(error.response.body);
     	}
     })();
 
     // sleep for a couple seconds before making the next request
     setTimeout(callback, 2000);
 }, function() {
-    // JSON.stringify(meetingsData)
-    console.log(meetingsData)
     console.log('*** *** *** *** ***');
     console.log(`Number of meetings in this zone: ${meetingsData.length}`);
     fs.writeFileSync('./geocoded-addresses.txt', JSON.stringify(meetingsData))
