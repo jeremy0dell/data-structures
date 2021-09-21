@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10"
+    "async": "^3.2.1",
+    "cheerio": "^1.0.0-rc.10",
+    "dotenv": "^10.0.0",
+    "got": "^11.8.2",
+    "querystring": "^0.2.1"
   }
 }
