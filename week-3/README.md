@@ -1,7 +1,7 @@
 # Week 3 Documentation
 
 ## Formatting the Data
-In my work as a software engineer, I realized that there is nothing wrong with doing some minor data manipulation by hand. For the last assignment I left the auxiliary information like zipcode and location instructions, which I knew might be a problem for the goelocation API.
+In my work as a software engineer, I realized that there is nothing wrong with doing some minor data manipulation by hand. For the last assignment I left the auxiliary information like zipcode and location instructions, which I knew might be a problem for the geolocation API.
 To solve for this I copied my original data file and deleted everything to the right of the first comma in each line, like this:
 ![image](https://user-images.githubusercontent.com/20379698/134233861-33f977ce-d19d-413e-bf2a-ab31c4a126ec.png)
 
