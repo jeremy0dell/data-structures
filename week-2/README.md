@@ -1,9 +1,9 @@
 # Week 2 Documentation
 
-To read the necesarry text file as a string in Node, I used code from [this StackOverflow answer](https://stackoverflow.com/a/9168933) that I found by Googling.  
-From there I load the text to cheerio using the example code from our assignment starter code  
+To read the necessary text file as a string in Node, I used code from [this StackOverflow answer](https://stackoverflow.com/a/9168933) that I found by Googling.  
+From there I load the text to cheerio using the example code from our assignment starter code. 
 
-### Getting the right data
+## Getting the right data
 ![image](https://user-images.githubusercontent.com/20379698/133002422-f5fd81a7-b9c0-4595-9759-7f1be1960311.png)
 The easiest way I've found to get the right selectors for HTML scraping is to let the browser generate the selector path/search string for you. I do this in Chrome by inspecting an element I want the path for, and copying the JSpath to my clipboard. In this image you can see where this command is found and the output of this command, which looks like this:  
 `document.querySelector("body > center > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > div > table > tbody > tr:nth-child(12) > td:nth-child(1)")`
@@ -14,6 +14,8 @@ I also notice in this image that the address information that I want is interspe
   
 So far, I have this output:  
 ![image](https://user-images.githubusercontent.com/20379698/133002837-cb17587d-c4cd-486d-9873-3101e9a518af.png)  
+  
+## Cleaning up the data  
   
 This is a long list of HTML Nodes, each with properties `parent`, `prev`, and `next`. I notice in the image that the first `.next` is of type text. I want to grab text information.  
 My way of grabbing all the text nodes looks like this: `.filter(node => node.name && node.name == 'br' && node.next && node.next.type == 'text')`. In this code I filter down the previous list to only include text nodes.  
@@ -88,6 +90,13 @@ And logging this output looks like this:
   '(Betw Lenox Avenue & Adam Clayton Powell Blvd) NY 10027',
   '469 West 142nd Street, Basement,',
 ```
+  
+## Storing the data
+  
 Great! Now my data looks like it can be considered in pairs of two. Street address, and state/zipcode.  
 
+At this point it would just take a loop to combine the pairs into a different array. After writing this loop I notice an outlier in the data: One address was a single line, not broken up by a `<br>` tag. Because of this I modified my loop slightly to check for these edge cases. I am sure that for other Manhattan regions, the datasets would have different types of outliers.
+  
+At this point I just need to write the output to a text file.
  
+### I hope this explaination of my thought process was helpful!
