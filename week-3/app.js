@@ -59,7 +59,7 @@ async.eachSeries(addresses, function(value, callback) {
 
     (async () => {
     	try {
-    		const response = await got(apiRequest);
+    	  const response = await got(apiRequest);
         var resBody = JSON.parse(response.body)
 
         let obj = {
@@ -69,9 +69,10 @@ async.eachSeries(addresses, function(value, callback) {
             long: resBody.OutputGeocodes[0].OutputGeocode.Longitude
           }
         }
-    		meetingsData.push(obj);
+        
+    	  meetingsData.push(obj);
     	} catch (error) {
-    		console.log(error.response.body);
+    	  console.log(error.response.body);
     	}
     })();
 
