@@ -76,6 +76,24 @@ async.eachSeries(addresses, async function(value, callback) {
     // 		console.log(error.response.body);
     // 	}
     // })();
+    (async () => {
+    	try {
+    	  const response = await got(apiRequest);
+        var resBody = JSON.parse(response.body)
+
+        let obj = {
+          address: value + ', New York, NY',
+          latLong: {
+            lat: resBody.OutputGeocodes[0].OutputGeocode.Latitude,
+            long: resBody.OutputGeocodes[0].OutputGeocode.Longitude
+          }
+        }
+        
+    	  meetingsData.push(obj);
+    	} catch (error) {
+    	  console.log(error.response.body);
+    	}
+    })();
 
     // sleep for a couple seconds before making the next request
     // setTimeout(callback, 2000);
