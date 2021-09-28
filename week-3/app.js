@@ -44,7 +44,8 @@ let addresses = [
 ]
 
 // eachSeries in the async module iterates over an array and operates on each item in the array in series
-async.eachSeries(addresses, function(value, callback) {
+async.eachSeries(addresses, async function(value, callback) {
+  // console.log(callback.toString())
     let query = {
         streetAddress: value,
         city: "New York",
@@ -54,29 +55,30 @@ async.eachSeries(addresses, function(value, callback) {
         version: "4.01"
     };
 
-    // construct a querystring from the `query` object's values and append it to the api URL
-    let apiRequest = API_URL + '?' + querystring.stringify(query);
+    // // construct a querystring from the `query` object's values and append it to the api URL
+    // let apiRequest = API_URL + '?' + querystring.stringify(query);
+    console.log(query)
+    // callback()
+    // (async () => {
+    // 	try {
+    // 		const response = await got(apiRequest);
+    //     var resBody = JSON.parse(response.body)
 
-    (async () => {
-    	try {
-    		const response = await got(apiRequest);
-        var resBody = JSON.parse(response.body)
-
-        let obj = {
-          address: value + ', New York, NY',
-          latLong: {
-            lat: resBody.OutputGeocodes[0].OutputGeocode.Latitude,
-            long: resBody.OutputGeocodes[0].OutputGeocode.Longitude
-          }
-        }
-    		meetingsData.push(obj);
-    	} catch (error) {
-    		console.log(error.response.body);
-    	}
-    })();
+    //     let obj = {
+    //       address: value + ', New York, NY',
+    //       latLong: {
+    //         lat: resBody.OutputGeocodes[0].OutputGeocode.Latitude,
+    //         long: resBody.OutputGeocodes[0].OutputGeocode.Longitude
+    //       }
+    //     }
+    // 		meetingsData.push(obj);
+    // 	} catch (error) {
+    // 		console.log(error.response.body);
+    // 	}
+    // })();
 
     // sleep for a couple seconds before making the next request
-    setTimeout(callback, 2000);
+    // setTimeout(callback, 2000);
 }, function() {
     console.log('*** *** *** *** ***');
     console.log(`Number of meetings in this zone: ${meetingsData.length}`);
