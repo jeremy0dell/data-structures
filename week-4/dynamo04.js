@@ -92,6 +92,7 @@ AWS.config.region = "us-east-1";
 var dynamodb = new AWS.DynamoDB();
 
 var params = {};
+// I changed this twice and re-ran the code for dates14, dates,17, and dates18 to get all 3 into the table
 params.Item = dates18[0]; 
 params.TableName = "processblog";
 
