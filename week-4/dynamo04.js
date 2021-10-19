@@ -1,5 +1,3 @@
-var blogEntries = [];
-
 class DateEntry {
   constructor(primaryKey, date, workouts) {
     this.pk = {};
@@ -70,11 +68,7 @@ var dates18 = []
 // 105 3x5 (focus on BALANCE)
 // Neutral grip pull-ups
 // 5x6 (focus on LATS)
-// Machine flies
-// 60 1x10 (raise chair cuz of shoulder pain)
-// 70 3x10 (focus on PECS)
-// Face pulls
-// 30 3x15
+
 mvts18.push(new Movement(1, 'Bench Press'), 'Chest', 105, 3, 5)
 mvts18.push(new Movement(2, 'Pull Ups'), 'Back', null, 5, 6)
 wrkts18.push(new Workout(1, 60, mvts18))
@@ -90,12 +84,7 @@ var dates14 = []
 mvts14.push(stair)
 wrkts14.push(new Workout(0, 30, 'Cardio', mvts14))
 dates14.push(new DateEntry(2, 'October 14 2021', wrkts14))
-// blogEntries.push(new BlogEntry(0, 'August 28 2019', "Yay, first day of class!", true, ["Cheez-Its", "M&Ms"]));
-// blogEntries.push(new BlogEntry(1, 'October 31, 2015', "I piloted my first solo flight!", true, ["pancakes"]));
-// blogEntries.push(new BlogEntry(2, 8675309, "867-5309?", false));
-// blogEntries.push(new BlogEntry(3, 'September 25, 2019', "I taught my favorite students.", true, ["peas", "carrots"]));
 
-console.log(dates17);
 var AWS = require('aws-sdk');
 AWS.config = new AWS.Config();
 AWS.config.region = "us-east-1";
