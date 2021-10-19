@@ -63,13 +63,11 @@ To be more precise, I change the array with .map() by taking each address, runni
 //     });
 // })).then(console.log)
 
-
+// My idea for this assignment was to only query addresses that contain 'Avenue'
+// I did this by using the syntax found in this StackOverflow post
+// https://stackoverflow.com/questions/14290857/sql-select-where-field-contains-words
 client.query("SELECT * FROM aalocations WHERE address LIKE '%Avenue%';", (err, res) => {
-    console.log(err, res);
+    console.table(res.rows);
     client.end();
 });
 
-// client.query(thisQuery, (err, res) => {
-//     console.log(err, res);
-//     client.end();
-// });

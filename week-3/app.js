@@ -80,6 +80,7 @@ async.eachSeries(addresses, async function(value, callback) {
     	try {
     	  const response = await got(apiRequest);
         var resBody = JSON.parse(response.body)
+        console.log(resBody)
 
         let obj = {
           address: value + ', New York, NY',
