@@ -48,12 +48,16 @@ var addresses = [
     {"address":"58-66 West 135th Street, New York, NY","latLong":{"lat":"40.6639307188879","long":"-73.9382749875207"}}
 ]
 
+/*
+I use this code to run the asynchronous client.query on every member of the addresses Array
+Promise.all works by executing an arbitrary number of async actions simultaneously!
+
+To be more precise, I change the array with .map() by taking each address, running the query on said address, and replacing it with the resulting Promise
+*/
+
 // Promise.all(addresses.map((a) => {
-//     console.log(a)
-//     const client = new Client(db_credentials);
-//     client.connect();
 //     var thisQuery = "INSERT INTO aalocations VALUES (E'" + a.address + "', " + a.latLong.lat + ", " + a.latLong.long + ");";
-//     client.query(thisQuery, (err, res) => {
+//     return client.query(thisQuery, (err, res) => {
 //         console.log(err, res);
 //         client.end();
 //     });
