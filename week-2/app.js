@@ -3,6 +3,8 @@ var cheerio = require('cheerio');
 
 const checkForZipcode = str => (/\b\d{5}\b/g).test(str)
 
+const num = 10
+
 const parseFile = (fileName) => fs.readFile(fileName, 'utf8', function(err, data) {
   if (err) throw err;
 
@@ -32,10 +34,35 @@ const parseFile = (fileName) => fs.readFile(fileName, 'utf8', function(err, data
     }
   }
 
-  console.log(fullAddresses)
+  // console.log(fullAddresses)
 
-  // fs.writeFileSync(`./addresses-aa-${8}.txt`, fullAddresses.join('\n'));
+
+  var timesArr = [];
+
+
+  var times = $('body > center > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > div > table > tbody > tr > td:nth-child(2)').length
+
+
+  for (var i = 1; i <= times; i++) {
+    // console.log($(`body > center > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > div > table > tbody > tr:nth-child(${i}) > td:nth-child(2)`))
+    timesArr.push($(`body > center > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > div > table > tbody > tr:nth-child(${i}) > td:nth-child(2)`).text())
+  }
+  // console.log(timesArr.length)
+
+  const timesRes = timesArr
+    .map(el => el.replace(/\n/g, ''))
+    .map(el => el.replace(/\t/g, '').trim())
+    .filter(string => string != '')
+    .map(el => el.split('                                               ').map(el => el.replace(/Meeting Type/g, '*').replace(/Special Interest/g, '^').split(/[*^]+/))
+    .map(el => ({ time: el[0], ...(el[1]) && {type: el[1]},  ...(el[2]) && {interest: el[2]}})))
+
+  
+    // console.log(timesRes, fullAddresses)
+
+    const final = fullAddresses.map((adr, i) => ({ address: adr, time: timesRes[i] }))
+  console.log(final)
+  // fs.writeFileSync(`./addresses-aa-${num}.txt`, fullAddresses.join('\n'));
 });
 
-parseFile(`data/aa-${8}.txt`)
+parseFile(`data/aa-${num}.txt`)
 
