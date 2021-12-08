@@ -5,6 +5,8 @@ const checkForZipcode = str => (/\b\d{5}\b/g).test(str)
 
 const num = 10
 
+var everything = []
+
 const parseFile = (fileName) => fs.readFile(fileName, 'utf8', function(err, data) {
   if (err) throw err;
 
@@ -60,9 +62,17 @@ const parseFile = (fileName) => fs.readFile(fileName, 'utf8', function(err, data
     // console.log(timesRes, fullAddresses)
 
     const final = fullAddresses.map((adr, i) => ({ address: adr, time: timesRes[i] }))
-  console.log(final)
+  // console.log(JSON.stringify(final))
+  everything = [...everything, ...final]
   // fs.writeFileSync(`./addresses-aa-${num}.txt`, fullAddresses.join('\n'));
 });
 
-parseFile(`data/aa-${num}.txt`)
+for (var i = 1; i < 10; i++) {
+  parseFile(`data/aa-${i}.txt`)
+}
+setTimeout(() => {
+  console.log(everything)
+  fs.writeFileSync(`./all-data.json`, JSON.stringify(everything))
+}, 4000)
+// console.log(everything)
 
