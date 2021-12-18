@@ -5,9 +5,32 @@ var AWS = require('aws-sdk');
 const moment = require('moment-timezone');
 const handlebars = require('handlebars');
 var fs = require('fs');
+const { initializeApp } = require("firebase/app");
+const { getFirestore, addDoc, collection, query, where, getDocs } = require("firebase/firestore")
 
 const dotenv = require('dotenv');
-dotenv.config();  
+dotenv.config();
+
+
+// Import the functions you need from the SDKs you need
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API,
+  authDomain: "processblog-ce6c8.firebaseapp.com",
+  databaseURL: "https://processblog-ce6c8-default-rtdb.firebaseio.com",
+  projectId: "processblog-ce6c8",
+  storageBucket: "processblog-ce6c8.appspot.com",
+  messagingSenderId: "865820007402",
+  appId: "1:865820007402:web:dc26145e50e1e901d43093"
+};
+
+// Initialize Firebase
+const fbApp = initializeApp(firebaseConfig);
+
+const db = getFirestore();
 
 // const indexSource = fs.readFileSync("templates/sensor.txt").toString();
 // var template = handlebars.compile(indexSource, { strict: true });
@@ -37,6 +60,7 @@ var hx = `<!doctype html>
        crossorigin=""/>
 </head>
 <body>
+<h1>Jeremy Odell's AA Map</h1>
 <div id="mapid"></div>
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
@@ -56,13 +80,52 @@ var jx = `;
         accessToken: 'pk.eyJ1Ijoidm9ucmFtc3kiLCJhIjoiY2pveGF1MmxoMjZnazNwbW8ya2dsZTRtNyJ9.mJ1kRVrVnwTFNdoKlQu_Cw'
     }).addTo(mymap);
     for (var i=0; i<data.length; i++) {
-        L.marker( [data[i].lat, data[i].long] ).bindPopup(JSON.stringify(data[i].address)).addTo(mymap);
+        L.marker( [data[i].lat, data[i].long] ).bindPopup(data[i].address +' - '+ data[i].time).addTo(mymap);
     }
     </script>
     </body>
     </html>`;
 
 
+// create templates
+var blogStart = `<!doctype html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>AA Meetings</title>
+    <meta name="description" content="Meetings of AA in Manhattan">
+    <meta name="author" content="AA">
+    <link rel="stylesheet" href="./styles.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin=""/>
+    </head>
+    <body style="background-color: black; color: white;">
+        <h1>Jeremy Odell's Process Blog!!</h1>
+        <select id="exercise" name="exercise">
+            <option value="">None</option>
+            <option value="lifting">Lifting</option>
+            <option value="cardio">Cardio</option>
+        </select>
+        <div id="items"></div>
+  `;
+
+var blogEnd = `
+        <script>
+            console.log('i work')
+            const selectElement = document.querySelector('#exercise');
+            console.log(selectElement)
+
+            selectElement.addEventListener('change', (event) => {
+                console.log(event.target.value)
+                window.location.href = window.location.pathname+"?"+'exercise='+event.target.value
+            });
+        </script>
+    </body>
+</html>
+`
+
+  
 app.get('/', function(req, res) {
     res.send('<h3>Code demo site</h3><ul><li><a href="/aa">aa meetings</a></li><li><a href="/temperature">temp sensor</a></li><li><a href="/processblog">process blog</a></li></ul>');
 }); 
@@ -95,56 +158,104 @@ app.get('/aa', function(req, res) {
             // res.send('hello' + JSON.stringify(qres.rows))
         }
         console.log('ehllo', qerr, qres)
-
-        // console.log('cl', thisQuery, process.env.AWSRDS_PW)
-        // res.send('hello' )
-
-        
-        // if (qerr) { throw qerr }
-        
-        // else {
-        //     res.send('hello')
-            // var resp = hx + JSON.stringify(qres.rows) + jx;
-            // res.send(resp);
-            // client.end();
-            // console.log('2) responded to request for aa meeting data');
-        // }
     });
 });
 
-app.get('/processblog', function(req, res) {
-    // AWS DynamoDB credentials
-    AWS.config = new AWS.Config();
-    AWS.config.region = "us-east-1";
-    console.log(req.query.type);
-    var topic = "cats";
-    if (["cats", "personal", "work"].includes(req.query.type)) {
-        topic = req.query.type;
+app.get('/processblog', async function(req, res) {
+    // console.log(db)
+    // try {
+    //     const docRef = await addDoc(collection(db, "workouts"), {
+    //         "time": 53,
+    //         "date": "2021-11-24",
+    //         "exercise": "lifting",
+    //         "type": "legs"
+    //     });
+      
+    //     console.log("Document written with ID: ", docRef.id);
+    //   } catch (e) {
+    //     console.error("Error adding document: ", e);
+    //   }
+
+    if (req.query.exercise) {
+        let exercise = req.query.exercise
+      
+        const coll = collection(db, "workouts");
+    
+        const q = query(coll, where("exercise", "==", exercise));
+    
+        const querySnapshot = await getDocs(q);
+    
+        const myWorkouts = querySnapshot.docs.map(doc => doc.data())
+    
+        
+        console.log(myWorkouts.map(workout => ({...workout, date: new Date(workout.date)})))
+        // querySnapshot.forEach((doc) => {
+        //   console.log(doc);
+        // });
+        res.send(blogStart + myWorkouts.map(w => `<div>
+            <div>Type: ${w.exercise}</div>
+            <div>Exercise: ${w.type}</div>
+            <div>Time Spent: ${w.time}</div>
+            <div>Date: ${moment(new Date(w.date)).format('MM-YYYY')}</div>
+        </div>`) + blogEnd)
+    
+    } else {
+        res.send(blogStart + blogEnd)
     }
+    // let exercise = req.query.exercise
+      
+    // const coll = collection(db, "workouts");
 
-    // Connect to the AWS DynamoDB database
-    var dynamodb = new AWS.DynamoDB();
+    // const q = query(coll, where("exercise", "==", exercise));
 
-    // DynamoDB (NoSQL) query
-    var params = {
-        TableName : "aaronprocessblog",
-        KeyConditionExpression: "topic = :topic", // the query expression
-        ExpressionAttributeValues: { // the query values
-            ":topic": {S: topic}
-        }
-    };
+    // const querySnapshot = await getDocs(q);
 
-    dynamodb.query(params, function(err, data) {
-        if (err) {
-            console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
-            throw (err);
-        }
-        else {
-            console.log(data.Items)
-            res.end(pbtemplate({ pbdata: JSON.stringify(data.Items)}));
-            console.log('3) responded to request for process blog data');
-        }
-    });
+    // const myWorkouts = querySnapshot.docs.map(doc => doc.data())
+
+    
+    // console.log(myWorkouts.map(workout => ({...workout, date: new Date(workout.date)})))
+    // // querySnapshot.forEach((doc) => {
+    // //   console.log(doc);
+    // // });
+    // res.send(blogStart + myWorkouts.map(w => `<div>
+    //     <div>Type: ${w.exercise}</div>
+    //     <div>Exercise: ${w.type}</div>
+    //     <div>Time Spent: ${w.time}</div>
+    //     <div>Date: ${moment(new Date(w.date)).format('MM-YYYY')}</div>
+    // </div>`) + blogEnd)
+    
+    // AWS DynamoDB credentials
+    // AWS.config = new AWS.Config();
+    // AWS.config.region = "us-east-1";
+    // console.log(req.query.type);
+    // var topic = "cats";
+    // if (["cats", "personal", "work"].includes(req.query.type)) {
+    //     topic = req.query.type;
+    // }
+
+    // // Connect to the AWS DynamoDB database
+    // var dynamodb = new AWS.DynamoDB();
+
+    // // DynamoDB (NoSQL) query
+    // var params = {
+    //     TableName : "aaronprocessblog",
+    //     KeyConditionExpression: "topic = :topic", // the query expression
+    //     ExpressionAttributeValues: { // the query values
+    //         ":topic": {S: topic}
+    //     }
+    // };
+
+    // dynamodb.query(params, function(err, data) {
+    //     if (err) {
+    //         console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+    //         throw (err);
+    //     }
+    //     else {
+    //         console.log(data.Items)
+    //         res.end(pbtemplate({ pbdata: JSON.stringify(data.Items)}));
+    //         console.log('3) responded to request for process blog data');
+    //     }
+    // });
 });
 
 // serve static files in /public
